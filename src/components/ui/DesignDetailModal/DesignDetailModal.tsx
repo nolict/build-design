@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { X, Copy, Check, Eye, FileText } from "lucide-react";
-import { getDesignById, type DesignData } from "@/lib/actions/getDesign";
+import { getDesignById, type DesignRow } from "@/lib/actions/design-actions";
 import { parseDesignMarkdown } from "./parseDesign";
 import { PreviewTab } from "./PreviewTab";
 import { ContentTab } from "./ContentTab";
@@ -21,7 +21,7 @@ export function DesignDetailModal({
   websiteName = "Design",
 }: DesignDetailModalProps) {
   const [activeTab, setActiveTab] = useState<"preview" | "content">("preview");
-  const [designData, setDesignData] = useState<DesignData | null>(null);
+  const [designData, setDesignData] = useState<DesignRow | null>(null);
   const [parsedData, setParsedData] = useState<ReturnType<typeof parseDesignMarkdown> | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
