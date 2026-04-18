@@ -1,0 +1,12 @@
+{
+  "designs": [
+    {
+      "id": "bun-dark",
+      "name": "Bun Dark",
+      "description": "Bun's visual brand - sophisticated dark theme with bright accents",
+      "category": "runtime",
+      "website": "bun.sh",
+      "tags": ["dark", "minimal", "modern"]
+    }
+  ]
+}

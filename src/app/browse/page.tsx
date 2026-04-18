@@ -5,29 +5,31 @@ import Image from "next/image";
 import { ArrowLeft, ExternalLink, Terminal, Search, X } from "lucide-react";
 import { useState } from "react";
 import BlurText from "@/components/ui/BlurText/BlurText";
+import { DesignDetailModal } from "@/components/ui/DesignDetailModal";
 
 const websites = [
-  { name: "Vercel", url: "vercel.com" },
-  { name: "GitHub", url: "github.com" },
-  { name: "Stripe", url: "stripe.com" },
-  { name: "Linear", url: "linear.app" },
-  { name: "Notion", url: "notion.so" },
-  { name: "Figma", url: "figma.com" },
-  { name: "Tailwind CSS", url: "tailwindcss.com" },
-  { name: "Next.js", url: "nextjs.org" },
-  { name: "React", url: "react.dev" },
-  { name: "TypeScript", url: "typescriptlang.org" },
+  { name: "Bun", url: "bun.sh", designId: "bun-dark" },
 ];
 
 function getFaviconUrl(domain: string): string {
   return `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
 }
 
-function WebsiteItem({ name, url }: { name: string; url: string }) {
+function WebsiteItem({ 
+  name, 
+  url, 
+  designId, 
+  onClick 
+}: { 
+  name: string; 
+  url: string; 
+  designId?: string;
+  onClick?: () => void;
+}) {
   return (
-    <Link
-      href={`/browse/${url}`}
-      className="group border-primary/10 bg-background/40 hover:bg-primary/10 flex items-center gap-3 border-b p-3 transition-all duration-200 hover:pl-4"
+    <button
+      onClick={onClick}
+      className="group border-primary/10 bg-background/40 hover:bg-primary/10 flex w-full items-center gap-3 border-b p-3 text-left transition-all duration-200 hover:pl-4"
     >
       <div className="border-primary/30 bg-background/60 flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded border">
         <Image
@@ -51,12 +53,16 @@ function WebsiteItem({ name, url }: { name: string; url: string }) {
         </div>
         <ExternalLink className="text-primary/60 ml-2 h-4 w-4 shrink-0 transition-transform duration-200 group-hover:translate-x-1 group-hover:-translate-y-1" />
       </div>
-    </Link>
+    </button>
   );
 }
 
 export default function BrowsePage() {
   const [search, setSearch] = useState("");
+  const [selectedDesign, setSelectedDesign] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   const filteredWebsites = websites.filter(
     (site) =>
@@ -134,7 +140,13 @@ export default function BrowsePage() {
           <div className="max-h-[60vh] overflow-y-auto">
             {filteredWebsites.length > 0 ? (
               filteredWebsites.map((site, index) => (
-                <WebsiteItem key={index} name={site.name} url={site.url} />
+                <WebsiteItem
+                  key={index}
+                  name={site.name}
+                  url={site.url}
+                  designId={site.designId}
+                  onClick={() => site.designId && setSelectedDesign({ id: site.designId, name: site.name })}
+                />
               ))
             ) : (
               <div className="text-muted-foreground p-8 text-center">
@@ -152,6 +164,14 @@ export default function BrowsePage() {
           </div>
         </div>
       </main>
+
+      {/* Design Detail Modal */}
+      <DesignDetailModal
+        isOpen={!!selectedDesign}
+        onClose={() => setSelectedDesign(null)}
+        designId={selectedDesign?.id || ""}
+        websiteName={selectedDesign?.name}
+      />
     </div>
   );
 }
