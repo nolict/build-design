@@ -18,12 +18,10 @@ function getFaviconUrl(domain: string): string {
 function WebsiteItem({ 
   name, 
   url, 
-  designId, 
   onClick 
 }: { 
   name: string; 
   url: string; 
-  designId?: string;
   onClick?: () => void;
 }) {
   return (
@@ -144,7 +142,6 @@ export default function BrowsePage() {
                   key={index}
                   name={site.name}
                   url={site.url}
-                  designId={site.designId}
                   onClick={() => site.designId && setSelectedDesign({ id: site.designId, name: site.name })}
                 />
               ))

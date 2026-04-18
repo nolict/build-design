@@ -29,12 +29,12 @@ export function DesignDetailModal({
 
   useEffect(() => {
     if (isOpen && designId) {
-      setLoading(true);
-      setError(null);
+      setLoading(true); // eslint-disable-line react-hooks/set-state-in-effect
       getDesignById(designId)
         .then((data) => {
           setDesignData(data);
           setParsedData(parseDesignMarkdown(data.content));
+          setError(null);
         })
         .catch((err) => setError(err.message))
         .finally(() => setLoading(false));
@@ -58,9 +58,9 @@ export function DesignDetailModal({
         onClick={onClose}
       />
       
-      <div className="relative z-10 flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-lg border border-primary/30 bg-background/95 shadow-2xl backdrop-blur-xl">
+      <div className="border-primary/30 bg-background/95 relative z-10 flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-lg border shadow-2xl backdrop-blur-xl">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-primary/20 bg-primary/5 px-4 py-3">
+        <div className="border-primary/20 bg-primary/5 flex items-center justify-between border-b px-4 py-3">
           <div className="flex items-center gap-3">
             <div className="flex gap-2">
               <div className="h-3.5 w-3.5 rounded-full bg-red-500/80" />
@@ -80,12 +80,12 @@ export function DesignDetailModal({
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-primary/20">
+        <div className="border-primary/20 flex border-b">
           <button
             onClick={() => setActiveTab("preview")}
             className={`flex flex-1 items-center justify-center gap-2 px-4 py-3 font-mono text-sm transition-colors ${
               activeTab === "preview"
-                ? "border-b-2 border-primary bg-primary/10 text-primary"
+                ? "border-primary bg-primary/10 text-primary border-b-2"
                 : "text-muted-foreground hover:text-white"
             }`}
           >
@@ -96,7 +96,7 @@ export function DesignDetailModal({
             onClick={() => setActiveTab("content")}
             className={`flex flex-1 items-center justify-center gap-2 px-4 py-3 font-mono text-sm transition-colors ${
               activeTab === "content"
-                ? "border-b-2 border-primary bg-primary/10 text-primary"
+                ? "border-primary bg-primary/10 text-primary border-b-2"
                 : "text-muted-foreground hover:text-white"
             }`}
           >
@@ -109,7 +109,7 @@ export function DesignDetailModal({
         <div className="flex-1 overflow-y-auto p-4">
           {loading && (
             <div className="flex h-40 items-center justify-center">
-              <div className="font-mono text-sm text-muted-foreground">Loading design data...</div>
+              <div className="text-muted-foreground font-mono text-sm">Loading design data...</div>
             </div>
           )}
           
@@ -132,14 +132,14 @@ export function DesignDetailModal({
         </div>
 
         {/* Footer with Copy */}
-        <div className="flex items-center justify-between border-t border-primary/20 bg-primary/5 px-4 py-3">
+        <div className="border-primary/20 bg-primary/5 flex items-center justify-between border-t px-4 py-3">
           <span className="text-muted-foreground font-mono text-xs">
             {loading ? "Loading..." : `${designData?.name || designId} loaded`}
           </span>
           <button
             onClick={handleCopy}
             disabled={!designData || loading}
-            className="flex items-center gap-2 rounded bg-primary px-4 py-2 font-mono text-sm text-black transition-all hover:bg-primary/80 disabled:opacity-50"
+            className="bg-primary hover:bg-primary/80 flex items-center gap-2 rounded px-4 py-2 font-mono text-sm text-black transition-all disabled:opacity-50"
           >
             {copied ? (
               <>

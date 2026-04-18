@@ -1,229 +1,308 @@
 "use client";
 
-import type { ParsedDesignData } from "@/types/design";
+import { useState } from "react";
+import type { ParsedDesignData, ColorItem } from "@/types/design";
+import { Search, Layout, Type, Palette, Box, Terminal } from "lucide-react";
 
 interface PreviewTabProps {
-  data: ReturnType<typeof import("./parseDesign").parseDesignMarkdown>;
+  data: ParsedDesignData;
 }
 
 export function PreviewTab({ data }: PreviewTabProps) {
-  const { colors, typography, components } = data;
+  const { atmosphere, colors, typography, components } = data;
+  const [activeSection, setActiveSection] = useState("overview");
 
-  // Get primary colors for the mockup
-  const bgColor = colors.surface?.[0]?.hex || colors.primary?.[0]?.hex || "#14151A";
-  const textColor = colors.secondary?.[2]?.hex || colors.primary?.[1]?.hex || "#FFFFFF";
-  const accentColor = colors.primary?.[2]?.hex || "#FBCFE8";
-  
-  // Get button styles
-  const buttonStyle = components.find(c => c.name.toLowerCase() === "button")?.properties;
-  const cardStyle = components.find(c => c.name.toLowerCase() === "card")?.properties;
-  const inputStyle = components.find(c => c.name.toLowerCase() === "input")?.properties;
+  // FIXED THEME: HIGH-END CLI (Deep Navy & Yellow)
+  const theme = {
+    bg: "#090A11",
+    surface: "#11131C",
+    accent: "#E9F284",
+    text: "#FFFFFF",
+    muted: "#7F8497",
+    border: "#1E2028"
+  };
 
-  // Get heading font size
-  const h1Typo = typography.find(t => t.role.toLowerCase().includes("heading 1") || t.role.toLowerCase().includes("heading1"));
-  const bodyTypo = typography.find(t => t.role.toLowerCase().includes("body"));
+  const sections = [
+    { id: "overview", label: "Overview", icon: <Layout className="h-3 w-3" /> },
+    { id: "colors", label: "Colors", icon: <Palette className="h-3 w-3" /> },
+    { id: "typography", label: "Typography", icon: <Type className="h-3 w-3" /> },
+    { id: "components", label: "Components", icon: <Box className="h-3 w-3" />, condition: components.length > 0 },
+  ].filter(s => s.condition !== false);
+
+  const scrollToSection = (id: string) => {
+    const el = document.getElementById(`section-${id}`);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      setActiveSection(id);
+    }
+  };
 
   return (
-    <div className="space-y-6">
-      {/* Website Mockup - Real-time preview */}
-      <section>
-        <h3 className="mb-4 font-mono text-lg font-bold text-white">Live Preview</h3>
-        
-        {/* Browser Window Mockup */}
-        <div className="overflow-hidden rounded-lg border border-primary/30 bg-[#1a1a1a] shadow-2xl">
-          {/* Browser Toolbar */}
-          <div className="flex items-center gap-2 border-b border-primary/20 bg-[#2a2a2a] px-3 py-2">
-            <div className="flex gap-1.5">
-              <div className="h-3 w-3 rounded-full bg-red-500/80" />
-              <div className="h-3 w-3 rounded-full bg-yellow-500/80" />
-              <div className="h-3 w-3 rounded-full bg-green-500/80" />
-            </div>
-            <div className="flex-1 rounded bg-[#1a1a1a] px-3 py-1">
-              <span className="font-mono text-xs text-muted-foreground">bun.sh</span>
-            </div>
+    <div 
+      className="flex h-full flex-col font-sans" 
+      style={{ backgroundColor: theme.bg, color: theme.text }}
+    >
+      {/* GLOSSY CLI SUB-NAV */}
+      <div 
+        className="sticky top-0 z-30 flex items-center justify-between border-b px-4 py-4 backdrop-blur-xl md:px-8"
+        style={{ borderColor: theme.border, backgroundColor: `${theme.bg}CC` }}
+      >
+        <div className="no-scrollbar flex items-center gap-8 overflow-x-auto">
+          <div className="flex items-center gap-2">
+            <div className="h-2 w-2 rounded-full" style={{ backgroundColor: theme.accent }} />
+            <span className="font-mono text-[10px] font-bold tracking-widest uppercase opacity-80">build-design</span>
           </div>
-          
-          {/* Website Content Preview */}
-          <div 
-            className="min-h-[300px] p-6"
-            style={{ 
-              backgroundColor: bgColor.startsWith('#') ? bgColor : `#${bgColor}`,
-              color: textColor.startsWith('#') ? textColor : `#${textColor}`,
-              fontFamily: "system-ui, -apple-system, sans-serif"
-            }}
-          >
-            {/* Header/Nav */}
-            <div className="mb-8 flex items-center justify-between">
-              <div 
-                className="font-bold"
-                style={{ fontSize: h1Typo ? `${Math.min(parseFloat(h1Typo.size) * 0.3, 24)}px` : "24px" }}
+          <div className="flex gap-6">
+            {sections.map((s) => (
+              <button
+                key={s.id}
+                onClick={() => scrollToSection(s.id)}
+                className={`flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] whitespace-nowrap uppercase transition-all ${
+                  activeSection === s.id ? "text-white opacity-100" : "opacity-30 hover:opacity-60"
+                }`}
+                style={{ color: activeSection === s.id ? theme.accent : 'inherit' }}
               >
-                bun
-              </div>
-              <div className="flex gap-4">
-                {["Docs", "Blog", "Community", "GitHub"].map((item) => (
-                  <span key={item} className="text-sm opacity-70">{item}</span>
-                ))}
-              </div>
-            </div>
-            
-            {/* Hero Section */}
-            <div className="mb-8 text-center">
-              <h1 
-                className="mb-4 font-bold"
-                style={{ 
-                  fontSize: h1Typo ? `${Math.min(parseFloat(h1Typo.size) * 0.4, 36)}px` : "36px",
-                  fontWeight: h1Typo?.weight || "800"
-                }}
-              >
-                The all-in-one
-                <br />
-                <span style={{ color: accentColor.startsWith('#') ? accentColor : `#${accentColor}` }}>JavaScript Runtime</span>
-              </h1>
-              <p 
-                className="mx-auto max-w-lg"
-                style={{ 
-                  fontSize: bodyTypo?.size || "14px",
-                  lineHeight: bodyTypo?.lineHeight || "20px"
-                }}
-              >
-                Bun is a fast all-in-one JavaScript runtime. 
-                Bundle, test, and run JSX, TypeScript, and Web apps.
-              </p>
-              
-              {/* CTA Buttons */}
-              <div className="mt-6 flex justify-center gap-4">
-                <button
-                  style={{
-                    backgroundColor: buttonStyle?.["Background Color"]?.startsWith('#') ? buttonStyle["Background Color"] : `#${buttonStyle?.["Background Color"] || "090A11"}`,
-                    color: buttonStyle?.["Color"]?.startsWith('#') ? buttonStyle["Color"] : `#${buttonStyle?.["Color"] || "7F8497"}`,
-                    borderRadius: buttonStyle?.["Border Radius"] || "40px",
-                    padding: buttonStyle?.["Padding"] || "8px 16px",
-                    border: "none"
-                  }}
-                  className="font-semibold"
-                >
-                  Get Started
-                </button>
-                <button
-                  style={{
-                    backgroundColor: "transparent",
-                    color: textColor.startsWith('#') ? textColor : `#${textColor}`,
-                    border: `1px solid ${textColor.startsWith('#') ? textColor : `#${textColor}`}`,
-                    borderRadius: "40px",
-                    padding: "8px 16px"
-                  }}
-                >
-                  View on GitHub
-                </button>
-              </div>
-            </div>
-            
-            {/* Cards Preview */}
-            <div className="mt-8 grid gap-4 md:grid-cols-3">
-              {[
-                { title: "3x faster", desc: "Than Node.js" },
-                { title: "Zero config", desc: "TypeScript out of the box" },
-                { title: "All-in-one", desc: "Bundler, test runner, package manager" }
-              ].map((item, i) => (
-                <div
-                  key={i}
-                  style={{
-                    backgroundColor: cardStyle?.["Background Color"]?.startsWith('#') ? cardStyle["Background Color"] : `#${cardStyle?.["Background Color"] || "282A36"}`,
-                    color: cardStyle?.["Color"]?.startsWith('#') ? cardStyle["Color"] : `#${cardStyle?.["Color"] || "E5E7EB"}`,
-                    borderRadius: cardStyle?.["Border Radius"] || "8px",
-                    padding: cardStyle?.["Padding"] || "16px 24px",
-                    border: cardStyle?.["Border"] || "1px solid #3B3F4B"
-                  }}
-                >
-                  <div className="mb-2 font-semibold">{item.title}</div>
-                  <div className="text-sm opacity-70">{item.desc}</div>
-                </div>
-              ))}
-            </div>
-            
-            {/* Input Preview */}
-            <div className="mt-6">
-              <input
-                type="text"
-                placeholder="npm create bun@latest"
-                readOnly
-                style={{
-                  backgroundColor: inputStyle?.["Background Color"]?.startsWith('#') ? inputStyle["Background Color"] : "transparent",
-                  color: inputStyle?.["Color"]?.startsWith('#') ? inputStyle["Color"] : `#${inputStyle?.["Color"] || "FFFFFFEB"}`,
-                  borderRadius: inputStyle?.["Border Radius"] || "6px",
-                  padding: inputStyle?.["Padding"] || "8px 12px",
-                  border: inputStyle?.["Border"] || "none",
-                  width: "100%"
-                }}
-              />
-            </div>
+                {s.label}
+              </button>
+            ))}
           </div>
         </div>
-      </section>
+        <div className="hidden h-8 w-8 items-center justify-center rounded-lg border md:flex" style={{ borderColor: theme.border }}>
+          <Search className="h-3 w-3 opacity-30" />
+        </div>
+      </div>
 
-      {/* Color Palette - Still show for reference */}
-      {colors.primary.length > 0 && (
-        <section>
-          <h3 className="mb-4 font-mono text-lg font-bold text-white">Color Palette</h3>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-            {[...colors.primary, ...colors.secondary, ...colors.surface].map((color, i) => (
-              <ColorSwatch key={i} color={color} />
-            ))}
+      <div className="flex-1 overflow-y-auto px-6 py-12 md:px-20 md:py-24">
+        {/* SECTION 00: OVERVIEW */}
+        <section id="section-overview" className="mb-40">
+           <div className="mb-12 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 font-mono text-[9px] font-bold tracking-widest uppercase" style={{ borderColor: theme.border, color: theme.accent }}>
+              <Terminal className="h-3 w-3" />
+              Structural Analysis v2.0
+           </div>
+           <h1 className="mb-10 max-w-4xl text-5xl font-extrabold tracking-tighter md:text-8xl">
+             {data.atmosphere.title || "Target"} <span className="block opacity-20">Identity System.</span>
+           </h1>
+           <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
+              <div className="space-y-6 text-lg leading-relaxed md:text-xl" style={{ color: theme.muted }}>
+                 {atmosphere.paragraphs.length > 0 ? (
+                   atmosphere.paragraphs.map((p, i) => <p key={i}>{p}</p>)
+                 ) : (
+                   <p>A comprehensive architectural breakdown of the design system components and visual language.</p>
+                 )}
+              </div>
+              <div className="rounded-3xl border p-8" style={{ borderColor: theme.border, backgroundColor: theme.surface }}>
+                 <div className="mb-6 flex justify-between">
+                    <span className="font-mono text-[10px] uppercase opacity-40">Quick Stats</span>
+                    <div className="flex gap-1">
+                       {[1,2,3].map(i => <div key={i} className="h-1 w-4 rounded-full" style={{ backgroundColor: theme.accent, opacity: i*0.3 }} />)}
+                    </div>
+                 </div>
+                 <div className="space-y-4">
+                    <div className="flex justify-between border-b pb-3" style={{ borderColor: theme.border }}>
+                       <span className="text-xs opacity-60">Dominant Hue</span>
+                       <span className="font-mono text-xs">{colors.primary[0]?.hex || "#N/A"}</span>
+                    </div>
+                    <div className="flex justify-between border-b pb-3" style={{ borderColor: theme.border }}>
+                       <span className="text-xs opacity-60">Typography Roles</span>
+                       <span className="font-mono text-xs">{typography.hierarchy.length} Levels</span>
+                    </div>
+                    <div className="flex justify-between">
+                       <span className="text-xs opacity-60">Component DNA</span>
+                       <span className="font-mono text-xs">{components.length} Items</span>
+                    </div>
+                 </div>
+              </div>
+           </div>
+        </section>
+
+        {/* SECTION 01: COLORS */}
+        <section id="section-colors" className="mb-40">
+          <div className="mb-16">
+            <span className="font-mono text-[11px] font-bold tracking-[0.4em] uppercase" style={{ color: theme.accent }}>01 / COLOR_SYSTEM</span>
+            <h2 className="mt-4 text-4xl font-bold tracking-tight md:text-6xl">Palette Specimen.</h2>
+          </div>
+
+          <div className="grid grid-cols-1 gap-20">
+             <div className="space-y-8">
+                <div className="flex items-center gap-4">
+                   <h3 className="text-xs font-bold tracking-widest uppercase opacity-40">Brand & Primary</h3>
+                   <div className="h-[1px] flex-1" style={{ backgroundColor: theme.border }} />
+                </div>
+                <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                   {colors.primary.map((c, i) => <ColorCard key={i} color={c} theme={theme} />)}
+                </div>
+             </div>
+             
+             <div className="space-y-8">
+                <div className="flex items-center gap-4">
+                   <h3 className="text-xs font-bold tracking-widest uppercase opacity-40">Surface & Background</h3>
+                   <div className="h-[1px] flex-1" style={{ backgroundColor: theme.border }} />
+                </div>
+                <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                   {colors.surface.map((c, i) => <ColorCard key={i} color={c} theme={theme} />)}
+                </div>
+             </div>
           </div>
         </section>
-      )}
 
-      {/* Typography */}
-      {typography.length > 0 && (
-        <section>
-          <h3 className="mb-4 font-mono text-lg font-bold text-white">Typography</h3>
-          <div className="space-y-2">
-            {typography.slice(0, 7).map((typo, i) => (
-              <div
-                key={i}
-                className="flex items-center justify-between rounded border border-primary/20 bg-primary/5 p-3"
+        {/* SECTION 02: TYPOGRAPHY */}
+        <section id="section-typography" className="mb-40">
+          <div className="mb-16">
+            <span className="font-mono text-[11px] font-bold tracking-[0.4em] uppercase" style={{ color: theme.accent }}>02 / TYPE_FORMS</span>
+            <h2 className="mt-4 text-4xl font-bold tracking-tight md:text-6xl">Typography Scale.</h2>
+          </div>
+
+          <div className="space-y-px" style={{ backgroundColor: theme.border }}>
+            {typography.hierarchy.map((typo, i) => (
+              <div 
+                key={i} 
+                className="group flex flex-col gap-8 bg-[#090A11] py-16 transition-all hover:px-8"
               >
-                <span className="text-white" style={{
-                  fontSize: Math.min(parseFloat(typo.size) / 2, 24) || 14,
-                  fontWeight: parseInt(typo.weight) || 400,
-                }}>
-                  {typo.role}
-                </span>
-                <div className="flex gap-4 font-mono text-xs text-muted-foreground">
-                  <span>{typo.size}</span>
-                  <span>{typo.weight}</span>
+                <div className="flex flex-wrap items-center justify-between gap-4 opacity-40">
+                  <span className="font-mono text-[10px] font-bold tracking-widest uppercase">{typo.role}</span>
+                  <div className="flex gap-6 font-mono text-[10px]">
+                    <span className="flex items-center gap-2"><div className="h-1 w-1 rounded-full bg-current" /> {typo.size}</span>
+                    <span className="flex items-center gap-2"><div className="h-1 w-1 rounded-full bg-current" /> {typo.weight}</span>
+                    <span className="flex items-center gap-2"><div className="h-1 w-1 rounded-full bg-current" /> {typo.lineHeight}</span>
+                  </div>
+                </div>
+                <div 
+                  className="max-w-5xl"
+                  style={{ 
+                    fontSize: typo.size.includes('px') ? typo.size : '16px',
+                    fontWeight: typo.weight,
+                    lineHeight: typo.lineHeight,
+                    fontFamily: typography.fontFamily || 'inherit',
+                    letterSpacing: typo.spacing
+                  }}
+                >
+                  {typo.role.toLowerCase().includes("heading") 
+                    ? "The quick brown fox jumps over the lazy dog" 
+                    : "Building high-performance interfaces requires a meticulous approach to typography and spatial awareness. This specimen represents the core textual DNA of the target system."}
                 </div>
               </div>
             ))}
           </div>
         </section>
-      )}
-    </div>
-  );
-}
 
-function ColorSwatch({ color }: { color: { name: string; hex: string; intent: string } }) {
-  const hex = color.hex.startsWith("#") ? color.hex : `#${color.hex}`;
-  const isLight = isLightColor(hex);
-
-  return (
-    <div className="overflow-hidden rounded border border-primary/20">
-      <div className="h-12 w-full" style={{ backgroundColor: hex }} />
-      <div className="bg-background p-2">
-        <div className="font-mono text-xs font-semibold text-white">{color.name}</div>
-        <div className="font-mono text-xs text-muted-foreground">{hex}</div>
+        {/* SECTION 03: COMPONENTS */}
+        {components.length > 0 && (
+          <section id="section-components" className="mb-40">
+            <div className="mb-16">
+              <span className="font-mono text-[11px] font-bold tracking-[0.4em] uppercase" style={{ color: theme.accent }}>03 / ATOMIC_DNA</span>
+              <h2 className="mt-4 text-4xl font-bold tracking-tight md:text-6xl">Component Specimen.</h2>
+            </div>
+            
+            <div className="grid grid-cols-1 gap-1 border-t" style={{ borderColor: theme.border }}>
+               {components.map((comp, i) => (
+                 <div 
+                    key={i} 
+                    className="flex flex-col items-center gap-12 border-b py-20 lg:flex-row"
+                    style={{ borderColor: theme.border }}
+                 >
+                    <div className="w-full lg:w-1/3">
+                       <div className="mb-2 font-mono text-[10px] font-bold tracking-widest uppercase" style={{ color: theme.accent }}>{comp.name}</div>
+                       <h4 className="text-2xl font-bold">Element Analysis</h4>
+                       <p className="mt-4 text-sm leading-relaxed opacity-40" style={{ color: theme.muted }}>
+                          Visual token extraction for the {comp.name} component, mapping exact CSS values from the source environment.
+                       </p>
+                    </div>
+                    
+                    <div className="flex flex-1 items-center justify-center rounded-3xl border border-dashed py-16" style={{ borderColor: theme.border }}>
+                       <div className="w-full max-w-sm px-8">
+                          {comp.name.toLowerCase() === "button" && (
+                            <button 
+                                style={{
+                                   backgroundColor: comp.properties["background-color"] || theme.accent,
+                                   color: isColorDark(comp.properties["background-color"] || theme.accent) ? "#FFF" : "#000",
+                                   borderRadius: comp.properties["border-radius"] || "8px",
+                                   padding: comp.properties["padding"] || "16px 32px",
+                                   border: comp.properties["border"] || "none",
+                                   width: "100%",
+                                   fontWeight: "700"
+                                }}
+                            >
+                               Action Specimen
+                            </button>
+                          )}
+                          {comp.name.toLowerCase() === "input" && (
+                            <input 
+                                placeholder="Input placeholder DNA..."
+                                style={{
+                                   backgroundColor: "transparent",
+                                   color: theme.text,
+                                   borderRadius: comp.properties["border-radius"] || "8px",
+                                   padding: comp.properties["padding"] || "16px 20px",
+                                   border: comp.properties["border"] || `1px solid ${theme.border}`,
+                                   width: "100%"
+                                }}
+                            />
+                          )}
+                          {comp.name.toLowerCase() === "card" && (
+                            <div 
+                                style={{
+                                   backgroundColor: comp.properties["background-color"] || theme.surface,
+                                   borderRadius: comp.properties["border-radius"] || "24px",
+                                   border: comp.properties["border"] || `1px solid ${theme.border}`,
+                                   padding: "32px"
+                                }}
+                            >
+                               <div className="mb-4 h-3 w-1/2 rounded bg-current opacity-20" />
+                               <div className="space-y-2">
+                                  <div className="h-2 w-full rounded bg-current opacity-10" />
+                                  <div className="h-2 w-full rounded bg-current opacity-10" />
+                                  <div className="h-2 w-3/4 rounded bg-current opacity-10" />
+                               </div>
+                            </div>
+                          )}
+                       </div>
+                    </div>
+                 </div>
+               ))}
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );
 }
 
-function isLightColor(hex: string): boolean {
-  const c = hex.substring(1);
+interface Theme {
+  bg: string;
+  surface: string;
+  accent: string;
+  text: string;
+  muted: string;
+  border: string;
+}
+
+function ColorCard({ color, theme }: { color: ColorItem; theme: Theme }) {
+  const hex = color.hex.startsWith("#") ? color.hex : `#${color.hex}`;
+  return (
+    <div className="group">
+       <div 
+          className="relative aspect-square w-full overflow-hidden rounded-2xl border transition-all group-hover:scale-[1.02] group-hover:shadow-[0_0_30px_rgba(233,242,132,0.1)]" 
+          style={{ backgroundColor: hex, borderColor: theme.border }} 
+       >
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100">
+             <div className="rounded-full bg-black/40 px-3 py-1 font-mono text-[8px] font-bold backdrop-blur-md">COPY HEX</div>
+          </div>
+       </div>
+       <div className="mt-4">
+          <div className="truncate font-mono text-[10px] font-bold tracking-tight uppercase">{color.name}</div>
+          <div className="font-mono text-[9px] opacity-40">{hex}</div>
+       </div>
+    </div>
+  );
+}
+
+function isColorDark(hex: string): boolean {
+  if (!hex || hex.length < 6) return true;
+  const c = hex.startsWith("#") ? hex.substring(1) : hex;
   const rgb = parseInt(c, 16);
   const r = (rgb >> 16) & 0xff;
   const g = (rgb >> 8) & 0xff;
   const b = (rgb >> 0) & 0xff;
   const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-  return luma > 128;
+  return luma < 128;
 }
