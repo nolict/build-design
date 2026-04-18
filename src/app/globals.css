@@ -1,0 +1,76 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: oklch(0.15 0.04 250); 
+  --foreground: #FFFFFF;
+  
+  --muted: oklch(0.25 0.04 250);
+  --muted-foreground: oklch(0.6 0.04 250 / 0.7);
+  
+  --primary: #E9F284;
+  --primary-foreground: #000000;
+  
+  --accent: #E9F284;
+  --accent-foreground: #000000;
+  
+  --border: rgba(233, 242, 132, 0.2);
+  --input: rgba(233, 242, 132, 0.1);
+  --ring: #E9F284;
+  
+  --radius: 0px;
+  
+  --font-sans: var(--font-geist-mono);
+  --font-mono: var(--font-geist-mono);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-accent: var(--accent);
+  --color-border: var(--border);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-mono);
+  -webkit-font-smoothing: antialiased;
+}
+
+.typing-text {
+  display: inline-block;
+  overflow: hidden;
+  border-right: 2px solid var(--primary);
+  white-space: nowrap;
+  animation: 
+    typing 2s steps(30, end),
+    blink-caret 0.75s step-end infinite;
+}
+
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: var(--primary) }
+}
+
+.container-custom {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+@layer base {
+  * { @apply border-border; }
+  body { @apply bg-background text-foreground; }
+}
