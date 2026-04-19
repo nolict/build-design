@@ -20,6 +20,7 @@ interface BlurTextProps {
   text?: string;
   delay?: number;
   className?: string;
+  style?: React.CSSProperties;
   animateBy?: 'words' | 'letters';
   direction?: 'top' | 'bottom';
   threshold?: number;
@@ -35,6 +36,7 @@ const BlurText = ({
   text = '',
   delay = 200,
   className = '',
+  style = {},
   animateBy = 'words',
   direction = 'top',
   threshold = 0.1,
@@ -92,7 +94,16 @@ const BlurText = ({
   const times = Array.from({ length: stepCount }, (_, i) => (stepCount === 1 ? 0 : i / (stepCount - 1)));
 
   return (
-    <p ref={ref} className={className} style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
+    <p
+      ref={ref}
+      className={className}
+      style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        ...style
+      }}
+    >
       {elements.map((segment, index) => {
         const animateKeyframes = buildKeyframes(fromSnapshot, toSnapshots);
 

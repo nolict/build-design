@@ -89,7 +89,7 @@ export async function getDesignById(id: string): Promise<DesignRow> {
 export async function createDesign(formData: DesignFormData): Promise<DesignRow> {
   const slug = formData.slug || generateSlug(formData.name);
 
-  const { data, error } = await supabaseAdmin.from("designs")
+  const { data, error } = await (supabaseAdmin.from("designs") as any)
     .insert({
       name: formData.name,
       slug,
@@ -114,7 +114,7 @@ export async function createDesign(formData: DesignFormData): Promise<DesignRow>
 export async function updateDesign(id: string, formData: DesignFormData): Promise<DesignRow> {
   const slug = formData.slug || generateSlug(formData.name);
 
-  const { data, error } = await supabaseAdmin.from("designs")
+  const { data, error } = await (supabaseAdmin.from("designs") as any)
     .update({
       name: formData.name,
       slug,
