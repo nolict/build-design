@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import Image from "next/image";
 import { ExternalLink, Search, X } from "lucide-react";
 import { useState } from "react";
@@ -14,15 +15,15 @@ function getFaviconUrl(domain: string): string {
 function WebsiteItem({ 
   name, 
   url, 
-  onClick 
+  slug 
 }: { 
   name: string; 
   url: string; 
-  onClick?: () => void;
+  slug: string;
 }) {
   return (
-    <button
-      onClick={onClick}
+    <Link
+      href={`/browse/${slug}`}
       className="group border-primary/10 bg-background/40 hover:bg-primary/10 flex w-full items-center gap-3 border-b p-3 text-left transition-all duration-200 hover:pl-4"
     >
       <div className="border-primary/30 bg-background/60 flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded border">
@@ -47,16 +48,14 @@ function WebsiteItem({
         </div>
         <ExternalLink className="text-primary/60 ml-2 h-4 w-4 shrink-0 transition-transform duration-200 group-hover:translate-x-1 group-hover:-translate-y-1" />
       </div>
-    </button>
+    </Link>
   );
 }
 
 export function WebsiteList({ 
-  designs, 
-  onSelect 
+  designs,
 }: { 
   designs: DesignSummary[];
-  onSelect: (design: { id: string; name: string }) => void;
 }) {
   const [search, setSearch] = useState("");
 
@@ -110,7 +109,7 @@ export function WebsiteList({
               key={site.id}
               name={site.name}
               url={site.url}
-              onClick={() => onSelect({ id: site.id, name: site.name })}
+              slug={site.slug}
             />
           ))
         ) : (
@@ -130,3 +129,4 @@ export function WebsiteList({
     </div>
   );
 }
+

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { login } from "@/lib/actions/auth-actions";
 import { Button } from "@/components/ui/button";
@@ -107,9 +108,9 @@ export default function LoginPage() {
         </div>
         
         <div className="mt-8 text-center">
-          <a href="/" className="text-xs tracking-widest text-white/20 transition-colors hover:text-[#E9F284]/60">
+          <Link href="/" className="text-xs tracking-widest text-white/20 transition-colors hover:text-[#E9F284]/60">
             ← RETURN_TO_BASE
-          </a>
+          </Link>
         </div>
       </div>
     </div>
