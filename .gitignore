@@ -1,9 +1,10 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
-/.pnp
-.pnp.*
+node_modules
+scan/node_modules
+.pnp
+.pnp.js
 .yarn/*
 !.yarn/patches
 !.yarn/plugins
@@ -33,6 +34,7 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 .env.local
+/scan/.env*
 
 # vercel
 .vercel

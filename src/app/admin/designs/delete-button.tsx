@@ -33,7 +33,7 @@ export function DeleteDesignButton({ id, className }: DeleteDesignButtonProps) {
     <button
       onClick={handleDelete}
       disabled={isDeleting}
-      className={`rounded-lg p-2 text-white/50 hover:bg-red-500/10 hover:text-red-400 disabled:opacity-50 transition-colors ${className}`}
+      className={`rounded-lg p-2 text-white/50 transition-colors hover:bg-red-500/10 hover:text-red-400 disabled:opacity-50 ${className}`}
     >
       <div className="flex items-center justify-center gap-2">
         {isDeleting ? (
@@ -41,7 +41,7 @@ export function DeleteDesignButton({ id, className }: DeleteDesignButtonProps) {
         ) : (
           <Trash2 size={16} />
         )}
-        <span className="lg:hidden text-xs">Delete</span>
+        <span className="text-xs lg:hidden">Delete</span>
       </div>
     </button>
   );

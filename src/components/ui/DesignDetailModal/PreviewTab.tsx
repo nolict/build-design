@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 import type { ParsedDesignData, ColorItem } from "@/types/design";
-import { Search, Layout, Type, Palette, Box, Terminal } from "lucide-react";
+import { Search, Layout, Type, Palette, Box, Terminal, CheckCircle2, XCircle, Smartphone } from "lucide-react";
 
 interface PreviewTabProps {
   data: ParsedDesignData;
 }
 
 export function PreviewTab({ data }: PreviewTabProps) {
-  const { atmosphere, colors, typography, components } = data;
+  const { atmosphere, colors, typography, components, dosAndDonts, responsive } = data;
   const [activeSection, setActiveSection] = useState("overview");
 
   // FIXED THEME: HIGH-END CLI (Deep Navy & Yellow)
@@ -27,6 +27,8 @@ export function PreviewTab({ data }: PreviewTabProps) {
     { id: "colors", label: "Colors", icon: <Palette className="h-3 w-3" /> },
     { id: "typography", label: "Typography", icon: <Type className="h-3 w-3" /> },
     { id: "components", label: "Components", icon: <Box className="h-3 w-3" />, condition: components.length > 0 },
+    { id: "guidelines", label: "Guidelines", icon: <CheckCircle2 className="h-3 w-3" />, condition: dosAndDonts.do.length > 0 || dosAndDonts.dont.length > 0 },
+    { id: "responsive", label: "Responsive", icon: <Smartphone className="h-3 w-3" />, condition: responsive.breakpoints.length > 0 },
   ].filter(s => s.condition !== false);
 
   const scrollToSection = (id: string) => {
@@ -77,7 +79,7 @@ export function PreviewTab({ data }: PreviewTabProps) {
         <section id="section-overview" className="mb-40">
            <div className="mb-12 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 font-mono text-[9px] font-bold tracking-widest uppercase" style={{ borderColor: theme.border, color: theme.accent }}>
               <Terminal className="h-3 w-3" />
-              Structural Analysis v2.0
+              Structural Analysis v3.0
            </div>
            <h1 className="mb-10 max-w-4xl text-5xl font-extrabold tracking-tighter md:text-8xl">
              {data.atmosphere.title || "Target"} <span className="block opacity-20">Identity System.</span>
@@ -88,6 +90,16 @@ export function PreviewTab({ data }: PreviewTabProps) {
                    atmosphere.paragraphs.map((p, i) => <p key={i}>{p}</p>)
                  ) : (
                    <p>A comprehensive architectural breakdown of the design system components and visual language.</p>
+                 )}
+                 {atmosphere.keyCharacteristics.length > 0 && (
+                   <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      {atmosphere.keyCharacteristics.map((char, i) => (
+                        <div key={i} className="flex items-center gap-3">
+                           <div className="h-1 w-1 rounded-full" style={{ backgroundColor: theme.accent }} />
+                           <span className="text-xs font-bold tracking-wide uppercase">{char}</span>
+                        </div>
+                      ))}
+                   </div>
                  )}
               </div>
               <div className="rounded-3xl border p-8" style={{ borderColor: theme.border, backgroundColor: theme.surface }}>
@@ -123,25 +135,53 @@ export function PreviewTab({ data }: PreviewTabProps) {
           </div>
 
           <div className="grid grid-cols-1 gap-20">
-             <div className="space-y-8">
-                <div className="flex items-center gap-4">
-                   <h3 className="text-xs font-bold tracking-widest uppercase opacity-40">Brand & Primary</h3>
-                   <div className="h-[1px] flex-1" style={{ backgroundColor: theme.border }} />
-                </div>
-                <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-                   {colors.primary.map((c, i) => <ColorCard key={i} color={c} theme={theme} />)}
-                </div>
-             </div>
+             {colors.primary.length > 0 && (
+               <div className="space-y-8">
+                  <div className="flex items-center gap-4">
+                     <h3 className="text-xs font-bold tracking-widest uppercase opacity-40">Brand & Primary</h3>
+                     <div className="h-[1px] flex-1" style={{ backgroundColor: theme.border }} />
+                  </div>
+                  <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                     {colors.primary.map((c, i) => <ColorCard key={i} color={c} theme={theme} />)}
+                  </div>
+               </div>
+             )}
              
-             <div className="space-y-8">
-                <div className="flex items-center gap-4">
-                   <h3 className="text-xs font-bold tracking-widest uppercase opacity-40">Surface & Background</h3>
-                   <div className="h-[1px] flex-1" style={{ backgroundColor: theme.border }} />
-                </div>
-                <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-                   {colors.surface.map((c, i) => <ColorCard key={i} color={c} theme={theme} />)}
-                </div>
-             </div>
+             {colors.secondary.length > 0 && (
+               <div className="space-y-8">
+                  <div className="flex items-center gap-4">
+                     <h3 className="text-xs font-bold tracking-widest uppercase opacity-40">Secondary & Accent</h3>
+                     <div className="h-[1px] flex-1" style={{ backgroundColor: theme.border }} />
+                  </div>
+                  <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                     {colors.secondary.map((c, i) => <ColorCard key={i} color={c} theme={theme} />)}
+                  </div>
+               </div>
+             )}
+
+             {colors.surface.length > 0 && (
+               <div className="space-y-8">
+                  <div className="flex items-center gap-4">
+                     <h3 className="text-xs font-bold tracking-widest uppercase opacity-40">Surface & Background</h3>
+                     <div className="h-[1px] flex-1" style={{ backgroundColor: theme.border }} />
+                  </div>
+                  <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                     {colors.surface.map((c, i) => <ColorCard key={i} color={c} theme={theme} />)}
+                  </div>
+               </div>
+             )}
+
+             {colors.semantic && colors.semantic.length > 0 && (
+               <div className="space-y-8">
+                  <div className="flex items-center gap-4">
+                     <h3 className="text-xs font-bold tracking-widest uppercase opacity-40">Semantic Colors</h3>
+                     <div className="h-[1px] flex-1" style={{ backgroundColor: theme.border }} />
+                  </div>
+                  <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                     {colors.semantic.map((c, i) => <ColorCard key={i} color={c} theme={theme} />)}
+                  </div>
+               </div>
+             )}
           </div>
         </section>
 
@@ -210,55 +250,167 @@ export function PreviewTab({ data }: PreviewTabProps) {
                     
                     <div className="flex flex-1 items-center justify-center rounded-3xl border border-dashed py-16" style={{ borderColor: theme.border }}>
                        <div className="w-full max-w-sm px-8">
-                          {comp.name.toLowerCase() === "button" && (
-                            <button 
-                                style={{
-                                   backgroundColor: comp.properties["background-color"] || theme.accent,
-                                   color: isColorDark(comp.properties["background-color"] || theme.accent) ? "#FFF" : "#000",
-                                   borderRadius: comp.properties["border-radius"] || "8px",
-                                   padding: comp.properties["padding"] || "16px 32px",
-                                   border: comp.properties["border"] || "none",
-                                   width: "100%",
-                                   fontWeight: "700"
-                                }}
-                            >
-                               Action Specimen
-                            </button>
-                          )}
-                          {comp.name.toLowerCase() === "input" && (
-                            <input 
-                                placeholder="Input placeholder DNA..."
-                                style={{
-                                   backgroundColor: "transparent",
-                                   color: theme.text,
-                                   borderRadius: comp.properties["border-radius"] || "8px",
-                                   padding: comp.properties["padding"] || "16px 20px",
-                                   border: comp.properties["border"] || `1px solid ${theme.border}`,
-                                   width: "100%"
-                                }}
-                            />
-                          )}
-                          {comp.name.toLowerCase() === "card" && (
-                            <div 
-                                style={{
-                                   backgroundColor: comp.properties["background-color"] || theme.surface,
-                                   borderRadius: comp.properties["border-radius"] || "24px",
-                                   border: comp.properties["border"] || `1px solid ${theme.border}`,
-                                   padding: "32px"
-                                }}
-                            >
-                               <div className="mb-4 h-3 w-1/2 rounded bg-current opacity-20" />
-                               <div className="space-y-2">
-                                  <div className="h-2 w-full rounded bg-current opacity-10" />
-                                  <div className="h-2 w-full rounded bg-current opacity-10" />
-                                  <div className="h-2 w-3/4 rounded bg-current opacity-10" />
+                          {(() => {
+                            const resolveColor = (val?: string, fallback?: string) => {
+                              if (!val) return fallback;
+                              if (val.startsWith("#")) return val;
+                              
+                              // Search in palette
+                              const allColors = [...colors.primary, ...colors.secondary, ...colors.surface, ...(colors.semantic || [])];
+                              const found = allColors.find(c => 
+                                c.name.toLowerCase().includes(val.toLowerCase()) || 
+                                val.toLowerCase().includes(c.name.toLowerCase())
+                              );
+                              return found ? (found.hex.startsWith("#") ? found.hex : `#${found.hex}`) : fallback;
+                            };
+
+                            const compName = comp.name.toLowerCase();
+                            
+                            if (compName.startsWith("button")) {
+                              const bgColor = resolveColor(
+                                comp.properties["background-color"],
+                                colors.primary[0]?.hex || theme.accent
+                              ) || theme.accent;
+                              return (
+                                <button 
+                                    style={{
+                                       backgroundColor: bgColor,
+                                       color: comp.properties["text-color"] || (isColorDark(bgColor) ? "#FFF" : "#000"),
+                                       borderRadius: comp.properties["border-radius"] || "8px",
+                                       padding: comp.properties["padding"] || "16px 32px",
+                                       border: comp.properties["border"] || "none",
+                                       width: "100%",
+                                       fontWeight: comp.properties["font-weight"] || "700",
+                                       fontSize: comp.properties["font-size"] || "16px"
+                                    }}
+                                >
+                                   Action Specimen
+                                </button>
+                              );
+                            }
+
+                            if (compName.startsWith("input")) {
+                              return (
+                                <input 
+                                    placeholder="Input placeholder DNA..."
+                                    style={{
+                                       backgroundColor: "transparent",
+                                       color: theme.text,
+                                       borderRadius: comp.properties["border-radius"] || "8px",
+                                       padding: comp.properties["padding"] || "12px 24px",
+                                       border: comp.properties["border"] || `1px solid ${theme.border}`,
+                                       width: "100%",
+                                       fontSize: comp.properties["font-size"] || "16px"
+                                    }}
+                                />
+                              );
+                            }
+
+                            if (compName.startsWith("card")) {
+                              const bgColor = resolveColor(
+                                comp.properties["background-color"],
+                                theme.surface
+                              ) || theme.surface;
+                              return (
+                                <div 
+                                    style={{
+                                       backgroundColor: bgColor,
+                                       borderRadius: comp.properties["border-radius"] || "24px",
+                                       border: comp.properties["border"] || `1px solid ${theme.border}`,
+                                       padding: comp.properties["padding"] || "32px"
+                                    }}
+                                >
+                                   <div className="mb-4 h-3 w-1/2 rounded bg-current opacity-20" />
+                                   <div className="space-y-2">
+                                      <div className="h-2 w-full rounded bg-current opacity-10" />
+                                      <div className="h-2 w-full rounded bg-current opacity-10" />
+                                      <div className="h-2 w-3/4 rounded bg-current opacity-10" />
+                                   </div>
+                                </div>
+                              );
+                            }
+
+                            return (
+                               <div className="rounded-xl border border-dashed p-8 text-center opacity-20" style={{ borderColor: theme.border }}>
+                                  {comp.name} Specimen
                                </div>
-                            </div>
-                          )}
+                            );
+                          })()}
                        </div>
                     </div>
                  </div>
                ))}
+            </div>
+          </section>
+        )}
+
+        {/* SECTION 04: GUIDELINES (Do's & Don'ts) */}
+        {(dosAndDonts.do.length > 0 || dosAndDonts.dont.length > 0) && (
+          <section id="section-guidelines" className="mb-40">
+            <div className="mb-16">
+              <span className="font-mono text-[11px] font-bold tracking-[0.4em] uppercase" style={{ color: theme.accent }}>04 / DEV_RULES</span>
+              <h2 className="mt-4 text-4xl font-bold tracking-tight md:text-6xl">Implementation Guide.</h2>
+            </div>
+            
+            <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
+               <div className="space-y-6">
+                  <div className="flex items-center gap-3 text-emerald-400">
+                     <CheckCircle2 className="h-5 w-5" />
+                     <h3 className="font-mono text-sm font-bold tracking-widest uppercase">The Best Practices</h3>
+                  </div>
+                  <div className="space-y-4">
+                     {dosAndDonts.do.map((item, i) => (
+                       <div key={i} className="rounded-2xl border bg-emerald-400/5 p-6" style={{ borderColor: 'rgba(52, 211, 153, 0.1)' }}>
+                          <p className="text-sm leading-relaxed opacity-80">{item}</p>
+                       </div>
+                     ))}
+                  </div>
+               </div>
+               
+               <div className="space-y-6">
+                  <div className="flex items-center gap-3 text-rose-400">
+                     <XCircle className="h-5 w-5" />
+                     <h3 className="font-mono text-sm font-bold tracking-widest uppercase">Common Pitfalls</h3>
+                  </div>
+                  <div className="space-y-4">
+                     {dosAndDonts.dont.map((item, i) => (
+                       <div key={i} className="rounded-2xl border bg-rose-400/5 p-6" style={{ borderColor: 'rgba(251, 113, 133, 0.1)' }}>
+                          <p className="text-sm leading-relaxed opacity-80">{item}</p>
+                       </div>
+                     ))}
+                  </div>
+               </div>
+            </div>
+          </section>
+        )}
+
+        {/* SECTION 05: RESPONSIVE */}
+        {responsive.breakpoints.length > 0 && (
+          <section id="section-responsive" className="mb-40">
+            <div className="mb-16">
+              <span className="font-mono text-[11px] font-bold tracking-[0.4em] uppercase" style={{ color: theme.accent }}>05 / ADAPTIVE_FLOW</span>
+              <h2 className="mt-4 text-4xl font-bold tracking-tight md:text-6xl">Breakpoint Specs.</h2>
+            </div>
+            
+            <div className="overflow-hidden rounded-3xl border" style={{ borderColor: theme.border }}>
+               <table className="w-full text-left font-mono text-xs">
+                  <thead>
+                     <tr className="border-b" style={{ borderColor: theme.border, backgroundColor: theme.surface }}>
+                        <th className="px-8 py-6 font-bold tracking-widest uppercase opacity-40">Device</th>
+                        <th className="px-8 py-6 font-bold tracking-widest uppercase opacity-40">Width</th>
+                        <th className="px-8 py-6 font-bold tracking-widest uppercase opacity-40">Key Modifications</th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     {responsive.breakpoints.map((bp, i) => (
+                       <tr key={i} className="border-b last:border-0" style={{ borderColor: theme.border }}>
+                          <td className="px-8 py-6 font-bold">{bp.name}</td>
+                          <td className="px-8 py-6 opacity-60">{bp.width}</td>
+                          <td className="px-8 py-6 opacity-60">{bp.changes}</td>
+                       </tr>
+                     ))}
+                  </tbody>
+               </table>
             </div>
           </section>
         )}

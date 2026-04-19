@@ -6,8 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "lint:fix": "eslint src --fix"
+    "lint": "next lint --dir src",
+    "lint:fix": "eslint src --fix",
+    "scan": "cd scan && bun run scan"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.0",

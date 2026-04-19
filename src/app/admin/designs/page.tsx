@@ -15,11 +15,11 @@ export default async function DesignsPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-white">Designs</h1>
-          <p className="mt-1 text-white/50 text-sm">Manage your design library</p>
+          <p className="mt-1 text-sm text-white/50">Manage your design library</p>
         </div>
         <Link
           href="/admin/designs/new"
-          className="flex items-center justify-center gap-2 rounded-lg bg-[#E9F284] px-4 py-2.5 text-sm font-medium text-[#090A11] hover:bg-[#d4e87a] transition-colors"
+          className="flex items-center justify-center gap-2 rounded-lg bg-[#E9F284] px-4 py-2.5 text-sm font-medium text-[#090A11] transition-colors hover:bg-[#d4e87a]"
         >
           <Plus size={18} />
           New Design
@@ -32,12 +32,12 @@ export default async function DesignsPage() {
         <input
           type="text"
           placeholder="Search designs..."
-          className="w-full rounded-lg border border-white/10 bg-[#0A0B14] py-2.5 pr-4 pl-10 text-sm text-white placeholder:text-white/30 focus:border-[#E9F284] focus:outline-none transition-colors"
+          className="w-full rounded-lg border border-white/10 bg-[#0A0B14] py-2.5 pr-4 pl-10 text-sm text-white transition-colors placeholder:text-white/30 focus:border-[#E9F284] focus:outline-none"
         />
       </div>
 
       {/* Desktop Table View */}
-      <div className="hidden lg:block overflow-hidden rounded-xl border border-white/10 bg-[#0A0B14]">
+      <div className="hidden overflow-hidden rounded-xl border border-white/10 bg-[#0A0B14] lg:block">
         <table className="w-full text-left">
           <thead className="border-b border-white/10 bg-white/5">
             <tr>
@@ -45,7 +45,7 @@ export default async function DesignsPage() {
               <th className="px-6 py-4 text-xs font-semibold tracking-wider text-white/50 uppercase">Slug</th>
               <th className="px-6 py-4 text-xs font-semibold tracking-wider text-white/50 uppercase">Category</th>
               <th className="px-6 py-4 text-xs font-semibold tracking-wider text-white/50 uppercase">Status</th>
-              <th className="px-6 py-4 text-xs font-semibold tracking-wider text-white/50 uppercase text-right">Actions</th>
+              <th className="px-6 py-4 text-right text-xs font-semibold tracking-wider text-white/50 uppercase">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
@@ -57,7 +57,7 @@ export default async function DesignsPage() {
               </tr>
             ) : (
               designs.map((design) => (
-                <tr key={design.id} className="hover:bg-white/5 transition-colors">
+                <tr key={design.id} className="transition-colors hover:bg-white/5">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#E9F284]/10 text-[#E9F284]">
@@ -65,7 +65,7 @@ export default async function DesignsPage() {
                       </div>
                       <div>
                         <div className="font-medium text-white">{design.name}</div>
-                        <div className="text-xs text-white/50 truncate max-w-[200px]">{design.url}</div>
+                        <div className="max-w-[200px] truncate text-xs text-white/50">{design.url}</div>
                       </div>
                     </div>
                   </td>
@@ -96,7 +96,7 @@ export default async function DesignsPage() {
                     <div className="flex items-center justify-end gap-2">
                       <Link
                         href={`/admin/designs/${design.id}`}
-                        className="rounded-lg p-2 text-white/50 hover:bg-white/10 hover:text-white transition-colors"
+                        className="rounded-lg p-2 text-white/50 transition-colors hover:bg-white/10 hover:text-white"
                       >
                         <Edit size={16} />
                       </Link>
@@ -118,7 +118,7 @@ export default async function DesignsPage() {
           </div>
         ) : (
           designs.map((design) => (
-            <div key={design.id} className="rounded-xl border border-white/10 bg-[#0A0B14] p-4 space-y-4">
+            <div key={design.id} className="space-y-4 rounded-xl border border-white/10 bg-[#0A0B14] p-4">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#E9F284]/10 text-[#E9F284]">
@@ -149,10 +149,10 @@ export default async function DesignsPage() {
                 </span>
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-2 border-t border-white/5">
+              <div className="flex items-center justify-end gap-3 border-t border-white/5 pt-2">
                 <Link
                   href={`/admin/designs/${design.id}`}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-white/5 py-2 text-xs font-medium text-white hover:bg-white/10 transition-colors"
+                  className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-white/5 py-2 text-xs font-medium text-white transition-colors hover:bg-white/10"
                 >
                   <Edit size={14} />
                   Edit

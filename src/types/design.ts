@@ -40,16 +40,25 @@ export interface DesignData {
   content: string;
 }
 
+export interface ResponsiveBreakpoint {
+  name: string;
+  width: string;
+  changes: string;
+}
+
 export interface ParsedDesignData {
   atmosphere: {
     title: string;
     description: string;
     paragraphs: string[];
+    keyCharacteristics: string[];
   };
   colors: {
     primary: ColorItem[];
     secondary: ColorItem[];
     surface: ColorItem[];
+    semantic?: ColorItem[];
+    gradients?: ColorItem[];
   };
   typography: {
     fontFamily: string;
@@ -61,5 +70,12 @@ export interface ParsedDesignData {
     borderRadius: LayoutItem[];
   };
   elevation: ElevationItem[];
+  dosAndDonts: {
+    do: string[];
+    dont: string[];
+  };
+  responsive: {
+    breakpoints: ResponsiveBreakpoint[];
+  };
   prompts: AIPromptItem[];
 }
