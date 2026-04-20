@@ -23,7 +23,7 @@ export default async function DesignDetailPage({ params }: PageProps) {
       <div className="fixed inset-0 z-0 bg-gradient-to-b from-[#0a0c14] via-[#0f1220] to-[#0a0c14]" />
 
       <header className="border-primary/20 bg-background/60 relative z-10 border-b backdrop-blur-md">
-        <div className="container-custom flex items-center gap-4 py-3">
+        <div className="mx-auto flex w-full max-w-[1440px] items-center gap-4 px-4 py-3 md:px-8">
           <Link
             href="/browse"
             className="text-muted-foreground hover:text-primary flex items-center gap-2 text-[10px] transition-colors md:text-sm"
@@ -39,7 +39,7 @@ export default async function DesignDetailPage({ params }: PageProps) {
         </div>
       </header>
 
-      <main className="container-custom relative z-10 flex w-full flex-col items-start overflow-x-hidden pt-10 pb-20 md:pb-32">
+      <main className="relative z-10 mx-auto flex w-full max-w-[1440px] flex-col items-start overflow-x-hidden px-4 pt-10 pb-20 md:px-8 md:pb-32">
         <div className="flex w-full flex-col">
           {/* CATEGORY TAG - REDUCED SPACING (MT-8/MT-12) */}
           <div className="mt-8 mb-8 flex items-center gap-4 md:mt-12 md:mb-10">

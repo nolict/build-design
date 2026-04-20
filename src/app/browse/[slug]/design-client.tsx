@@ -21,7 +21,7 @@ export function DesignClientPage({ design }: { design: DesignRow }) {
   };
 
   return (
-    <div className="flex w-full flex-col gap-6 overflow-hidden md:gap-8">
+    <div className="flex w-full min-w-0 flex-col gap-6 md:gap-8">
       {/* CLI Installation Section */}
       <section className="flex w-full flex-col gap-3">
         <h2 className="text-primary font-mono text-[10px] font-bold tracking-[0.2em] md:text-xs">INSTALLATION</h2>
@@ -48,7 +48,7 @@ export function DesignClientPage({ design }: { design: DesignRow }) {
       </section>
 
       {/* Tabs Section */}
-      <section className="flex flex-col gap-4">
+      <section className="flex min-w-0 flex-col gap-4">
         <div className="flex items-center gap-4 border-b border-white/5 pb-2 md:gap-6">
           <button
             onClick={() => setActiveTab("preview")}
@@ -75,7 +75,7 @@ export function DesignClientPage({ design }: { design: DesignRow }) {
         </div>
 
         {/* Content Rendering */}
-        <div className="min-h-[300px] md:min-h-[400px]">
+        <div className="min-h-[300px] min-w-0 md:min-h-[400px]">
           {activeTab === "preview" ? (
             <PreviewTab data={parsedData} />
           ) : (
