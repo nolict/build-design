@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Build Design AI",
+  "version": "0.1.0",
+  "description": "Generate DESIGN with AI.",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "downloads",
+    "scripting",
+    "notifications"
+  ],
+  "host_permissions": [
+    "https://integrate.api.nvidia.com/*",
+    "https://api.openai.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "options_page": "options.html",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ]
+}
