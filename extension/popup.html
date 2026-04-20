@@ -1,76 +1,149 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&display=swap" rel="stylesheet">
   <style>
-    body { width: 280px; padding: 15px; font-family: sans-serif; background: #f8f9fa; }
-    h3 { margin-top: 0; color: #333; font-size: 16px; margin-bottom: 12px; }
-    .btn-container { display: flex; flex-direction: column; gap: 8px; }
+    :root {
+      --background: #0d1117;
+      --foreground: #ffffff;
+      --primary: #E9F284;
+      --secondary: #161b22;
+      --border: rgba(233, 242, 132, 0.2);
+    }
+    body { 
+      width: 320px; 
+      padding: 20px; 
+      font-family: 'Geist Mono', monospace; 
+      background-color: var(--background); 
+      color: var(--foreground);
+      margin: 0;
+      border: 1px solid var(--border);
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+    }
+    h3 { 
+      margin: 0; 
+      color: var(--primary); 
+      font-size: 16px; 
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+    .btn-container { display: flex; flex-direction: column; gap: 10px; }
     button { 
       width: 100%; 
-      padding: 10px; 
+      padding: 12px; 
       border: none; 
       cursor: pointer; 
-      border-radius: 6px; 
-      font-weight: bold;
+      border-radius: 0; 
+      font-weight: 800;
+      font-family: 'Geist Mono', monospace;
+      text-transform: uppercase;
       transition: all 0.2s;
     }
-    #scanBtn { background: #28a745; color: white; }
-    #scanBtn:hover { background: #218838; }
+    #scanBtn { background: var(--primary); color: black; }
+    #scanBtn:hover { filter: brightness(1.1); }
+    #scanBtn:disabled { background: #333; color: #666; cursor: not-allowed; }
     
-    #stopBtn { background: #dc3545; color: white; display: none; }
-    #stopBtn:hover { background: #c82333; }
+    #stopBtn { background: #ff4444; color: white; display: none; }
+    #stopBtn:hover { background: #cc0000; }
 
-    #downloadBtn { background: #007bff; color: white; display: none; }
-    #downloadBtn:hover { background: #0069d9; }
+    #downloadBtn { 
+      background: transparent; 
+      color: var(--primary); 
+      border: 1px solid var(--primary);
+      display: none; 
+    }
+    #downloadBtn:hover { background: rgba(233, 242, 132, 0.1); }
     
     #status { 
-      margin: 12px 0 8px 0; 
-      font-size: 13px; 
-      color: #555; 
-      text-align: center; 
+      margin-bottom: 15px;
+      font-size: 11px; 
+      color: var(--primary); 
+      text-align: left; 
       padding: 8px;
-      background: #fff;
-      border-radius: 6px;
-      border: 1px solid #ddd;
-      font-weight: bold;
+      background: rgba(233, 242, 132, 0.05);
+      border-left: 3px solid var(--primary);
+      font-weight: 600;
+      text-transform: uppercase;
     }
 
     #previewArea {
-      height: 120px;
-      background: #222;
-      color: #0f0;
+      height: 180px;
+      background: #000;
+      color: #E9F284;
       padding: 10px;
-      font-family: monospace;
-      font-size: 11px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px;
       overflow-y: auto;
-      border-radius: 6px;
-      margin-bottom: 12px;
+      border: 1px solid var(--border);
+      margin-bottom: 15px;
       white-space: pre-wrap;
       display: none;
+      scrollbar-width: thin;
+      scrollbar-color: var(--primary) transparent;
+    }
+
+    .footer {
+      margin-top: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .settings-link { 
-      display: block; 
-      margin-top: 12px; 
-      text-align: center; 
-      font-size: 12px; 
-      color: #666; 
+      font-size: 10px; 
+      color: rgba(255, 255, 255, 0.5); 
       text-decoration: none; 
+      text-transform: uppercase;
+      font-weight: 600;
     }
-    .settings-link:hover { color: #007bff; }
+    .settings-link:hover { color: var(--primary); }
+
+    .version {
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.3);
+    }
+    .model-info {
+      font-size: 9px;
+      color: rgba(255, 255, 255, 0.4);
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    #activeModel {
+      color: var(--primary);
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
-  <h3>build-design</h3>
-  <div id="status">Ready</div>
+  <div class="header">
+    <h3>BUILD DESIGN</h3>
+    <div class="version">v2.0</div>
+  </div>
+
+  <div class="model-info">ACTIVE MODEL: <span id="activeModel">LOADING...</span></div>
+  <div id="status">READY TO SCAN</div>
   <div id="previewArea"></div>
   
   <div class="btn-container">
-    <button id="scanBtn">Start Scan</button>
-    <button id="stopBtn">Stop Scanning</button>
-    <button id="downloadBtn">Download DESIGN.md</button>
+    <button id="scanBtn">Execute Scan</button>
+    <button id="stopBtn">Abort Process</button>
+    <button id="downloadBtn">Get DESIGN.md</button>
   </div>
-  <a href="#" id="openOptions" class="settings-link">Open Dashboard</a>
+
+  <div class="footer">
+    <a href="#" id="openOptions" class="settings-link">Configuration</a>
+    <span style="color:rgba(255,255,255,0.2)">|</span>
+    <a href="https://github.com/abib/build-design" target="_blank" class="settings-link">Docs</a>
+  </div>
 
   <script src="popup.js"></script>
 </body>

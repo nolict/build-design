@@ -22,19 +22,23 @@ const updateUI = (state) => {
     downloadBtn.style.display = 'none';
   } else if (scanResult) {
     scanBtn.style.display = 'block';
-    scanBtn.textContent = 'Scan New Page';
+    scanBtn.textContent = 'EXECUTE NEW SCAN';
     stopBtn.style.display = 'none';
     downloadBtn.style.display = 'block';
     previewArea.style.display = 'none';
   } else {
     scanBtn.style.display = 'block';
-    scanBtn.textContent = 'Start Scan';
+    scanBtn.textContent = 'EXECUTE SCAN';
     stopBtn.style.display = 'none';
     downloadBtn.style.display = 'none';
   }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+  chrome.storage.sync.get(['model'], (items) => {
+    document.getElementById('activeModel').textContent = items.model || 'NONE';
+  });
+
   chrome.runtime.sendMessage({ action: 'GET_STATUS' }, (response) => {
     if (chrome.runtime.lastError) return;
     updateUI(response);
